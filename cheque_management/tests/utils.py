@@ -18,30 +18,17 @@ ITEM = "_Test Cheque Service"
 
 
 def before_tests():
-	"""Complete the setup wizard on a fresh site so ERPNext masters (groups, UOMs, fiscal year) exist."""
-	from frappe.desk.page.setup_wizard.setup_wizard import setup_complete
+	"""Make a fresh site usable: ERPNext's preset masters (root groups, UOMs, ...) and a company.
+
+	Not the setup wizard: on v16 it returns early or swallows errors, leaving no masters behind."""
+	from erpnext.setup.setup_wizard.operations.install_fixtures import install
 
 	frappe.clear_cache()
-	if not frappe.get_all("Company", limit=1):
-		year = now_datetime().year
-		setup_complete(
-			{
-				"currency": "INR",
-				"full_name": "Test User",
-				"company_name": COMPANY,
-				"timezone": "Asia/Kolkata",
-				"company_abbr": ABBR,
-				"industry": "Services",
-				"country": "India",
-				"fy_start_date": f"{year}-01-01",
-				"fy_end_date": f"{year}-12-31",
-				"language": "english",
-				"company_tagline": "Testing",
-				"email": "test@example.com",
-				"password": "test",
-				"chart_of_accounts": "Standard",
-			}
-		)
+	if frappe.get_all("Company", limit=1):
+		return  # a site in use: tests build their data inside a rolled-back transaction
+	if not frappe.db.exists("Item Group", {"is_group": 1, "parent_item_group": ("in", ("", None))}):
+		install("India")
+	make_company()
 	frappe.db.commit()  # nosemgrep: setup data must survive the test transaction rollback
 
 
@@ -84,9 +71,9 @@ def make_company():
 		return
 	# Company creation adds departments under this root; some sites have renamed or removed it.
 	if not frappe.db.exists("Department", "All Departments"):
-		frappe.get_doc({"doctype": "Department", "department_name": "All Departments", "is_group": 1}).insert(
-			set_name="All Departments"
-		)
+		root = frappe.get_doc({"doctype": "Department", "department_name": "All Departments", "is_group": 1})
+		root.flags.ignore_mandatory = True  # the root has no company; v16 marks company mandatory
+		root.insert(set_name="All Departments")
 	frappe.get_doc(
 		{
 			"doctype": "Company",

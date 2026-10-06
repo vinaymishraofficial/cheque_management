@@ -24,7 +24,7 @@ FIELDS = [
 
 def send_daily_digest():
 	settings = get_settings()
-	if not settings.send_daily_digest or not settings.digest_role:
+	if not settings.send_daily_digest or not settings.digest_role or not has_outgoing_email():
 		return
 
 	sections = get_sections(
@@ -45,6 +45,13 @@ def send_daily_digest():
 			header=[_("Cheque Digest"), "blue"],
 			now=False,
 		)
+
+
+def has_outgoing_email() -> bool:
+	"""Without an outgoing Email Account sendmail raises, which would fail this job every day."""
+	from frappe.email.doctype.email_account.email_account import EmailAccount
+
+	return bool(EmailAccount.find_outgoing(_raise_error=False))
 
 
 def get_sections(today, days_ahead: int, validity_months: int) -> list[tuple[str, list]]:

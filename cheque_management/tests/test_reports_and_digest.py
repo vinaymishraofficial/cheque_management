@@ -1,6 +1,8 @@
 # Copyright (c) 2026, Vinay Mishra and contributors
 # License: MIT. See LICENSE
 
+from unittest.mock import patch
+
 import frappe
 from frappe.tests.utils import FrappeTestCase
 from frappe.utils import add_days, getdate, nowdate
@@ -81,15 +83,32 @@ class TestDigest(FrappeTestCase):
 		self.assertIn(overdue.name, next(iter(names.values())))
 		self.assertTrue(any(due.name in found for found in names.values()))
 
-	def test_digest_is_queued_for_role_holders(self):
+	def test_digest_is_sent_to_role_holders(self):
 		configure_settings(digest_role="Accounts Manager")
 		today = getdate(nowdate())
-		make_cheque(amount=100, posting_date=today, cheque_date=today)
+		cheque = make_cheque(amount=100, posting_date=today, cheque_date=today)
 		user = make_user("cheque.digest@example.com", "Accounts Manager")
 
-		before = frappe.db.count("Email Queue Recipient", {"recipient": user})
-		send_daily_digest()
-		self.assertGreater(frappe.db.count("Email Queue Recipient", {"recipient": user}), before)
+		with (
+			patch("cheque_management.tasks.has_outgoing_email", return_value=True),
+			patch("cheque_management.tasks.frappe.sendmail") as sendmail,
+		):
+			send_daily_digest()
+
+		sent = {call.kwargs["recipients"][0]: call.kwargs for call in sendmail.call_args_list}
+		self.assertIn(user, sent)
+		rows = [row.name for _label, rows in sent[user]["args"]["sections"] for row in rows]
+		self.assertIn(cheque.name, rows)
+
+	def test_digest_skipped_without_outgoing_email_account(self):
+		configure_settings()
+		make_cheque(amount=100, posting_date=getdate(nowdate()), cheque_date=getdate(nowdate()))
+		with (
+			patch("cheque_management.tasks.has_outgoing_email", return_value=False),
+			patch("cheque_management.tasks.frappe.sendmail") as sendmail,
+		):
+			send_daily_digest()
+		sendmail.assert_not_called()
 
 	def test_digest_off(self):
 		configure_settings(send_daily_digest=0)
