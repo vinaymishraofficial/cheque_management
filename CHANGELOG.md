@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.1
+
+- The daily digest no longer fails on sites without an outgoing Email Account; it is skipped.
+- CI runs the full test suite on Frappe / ERPNext v15 and v16.
+
 ## 1.0.0
 
 First release.
