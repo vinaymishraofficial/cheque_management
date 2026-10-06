@@ -1,0 +1,30 @@
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1f272e; max-width: 640px;">
+	{% for label, rows in sections if rows %}
+	<h3 style="font-size: 15px; margin: 24px 0 8px;">{{ label }} <span style="color: #7c7c7c; font-weight: normal;">({{ rows|length }})</span></h3>
+	<table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+		<thead>
+			<tr style="text-align: left; color: #7c7c7c; border-bottom: 1px solid #ededed;">
+				<th style="padding: 6px 8px;">{{ _("Cheque") }}</th>
+				<th style="padding: 6px 8px;">{{ _("Party") }}</th>
+				<th style="padding: 6px 8px;">{{ _("Cheque No") }}</th>
+				<th style="padding: 6px 8px;">{{ _("Cheque Date") }}</th>
+				<th style="padding: 6px 8px; text-align: right;">{{ _("Amount") }}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for row in rows %}
+			<tr style="border-bottom: 1px solid #f3f3f3;">
+				<td style="padding: 6px 8px;"><a href="{{ site_url }}/app/cheque/{{ row.name }}">{{ row.name }}</a></td>
+				<td style="padding: 6px 8px;">{{ row.party_name }}</td>
+				<td style="padding: 6px 8px;">{{ row.cheque_no }}</td>
+				<td style="padding: 6px 8px;">{{ frappe.format(row.cheque_date, {"fieldtype": "Date"}) }}</td>
+				<td style="padding: 6px 8px; text-align: right;">{{ frappe.format(row.amount, {"fieldtype": "Currency", "options": row.party_account_currency}) }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% endfor %}
+	<p style="margin-top: 24px; font-size: 12px; color: #7c7c7c;">
+		{{ _("Sent by Cheque Management. Change recipients or turn this off in Cheque Settings.") }}
+	</p>
+</div>

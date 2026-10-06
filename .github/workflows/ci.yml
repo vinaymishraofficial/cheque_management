@@ -4,18 +4,33 @@ on:
   push:
     branches:
       - develop
+      - version-15
+      - version-16
   pull_request:
+  workflow_dispatch:
 
 concurrency:
-  group: develop-cheque_management-${{ github.event.number }}
+  group: ci-${{ github.event.number || github.ref }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   tests:
+    name: Server (Frappe ${{ matrix.frappe }})
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     strategy:
       fail-fast: false
-    name: Server
+      matrix:
+        include:
+          - frappe: version-15
+            python: "3.11"
+            node: 20
+          - frappe: version-16
+            python: "3.14"
+            node: 24
 
     services:
       redis-cache:
@@ -38,65 +53,49 @@ jobs:
       - name: Clone
         uses: actions/checkout@v6
 
-      - name: Find tests
-        run: |
-          echo "Finding tests"
-          grep -rn "def test" > /dev/null
-
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.14'
+          python-version: ${{ matrix.python }}
 
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version: ${{ matrix.node }}
           check-latest: true
 
       - name: Cache pip
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/*requirements.txt', '**/pyproject.toml', '**/setup.py', '**/setup.cfg') }}
+          key: ${{ runner.os }}-pip-${{ matrix.frappe }}-${{ hashFiles('**/pyproject.toml') }}
           restore-keys: |
-            ${{ runner.os }}-pip-
-            ${{ runner.os }}-
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: 'echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT'
-
-      - uses: actions/cache@v4
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-pip-${{ matrix.frappe }}-
 
       - name: Install MariaDB Client
         run: |
           sudo apt update
           sudo apt-get install mariadb-client
 
-      - name: Setup
+      - name: Setup bench
         run: |
           pip install frappe-bench
-          bench init --skip-redis-config-generation --skip-assets --python "$(which python)" ~/frappe-bench
+          bench init --skip-redis-config-generation --skip-assets --frappe-branch ${{ matrix.frappe }} --python "$(which python)" ~/frappe-bench
 
-      - name: Install
+      - name: Install apps
         working-directory: /home/runner/frappe-bench
         run: |
-          bench get-app cheque_management $GITHUB_WORKSPACE
+          bench get-app --skip-assets --branch ${{ matrix.frappe }} erpnext
+          bench get-app --skip-assets cheque_management $GITHUB_WORKSPACE
           bench setup requirements --dev
           bench new-site --db-root-password root --admin-password admin test_site
+          bench --site test_site install-app erpnext
           bench --site test_site install-app cheque_management
-          bench build
+          bench build --app cheque_management
         env:
-          CI: 'Yes'
+          CI: "Yes"
 
-      - name: Run Tests
+      - name: Run tests
         working-directory: /home/runner/frappe-bench
         run: |
           bench --site test_site set-config allow_tests true
