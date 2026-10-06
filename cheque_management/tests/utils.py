@@ -6,6 +6,8 @@
 Everything is created on demand, so the tests run on a fresh CI site and on a site with
 real data alike, on Frappe / ERPNext v15 and v16."""
 
+import os
+
 import frappe
 from frappe.utils import add_days, add_months, getdate, now_datetime, nowdate
 
@@ -24,7 +26,7 @@ def before_tests():
 	from erpnext.setup.setup_wizard.operations.install_fixtures import install
 
 	frappe.clear_cache()
-	if frappe.get_all("Company", limit=1):
+	if not os.environ.get("CI") and frappe.get_all("Company", limit=1):
 		return  # a site in use: tests build their data inside a rolled-back transaction
 	install("India")  # preset masters; existing records are skipped
 	make_calendar_fiscal_years()
