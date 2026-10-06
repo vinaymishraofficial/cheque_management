@@ -26,10 +26,29 @@ def before_tests():
 	frappe.clear_cache()
 	if frappe.get_all("Company", limit=1):
 		return  # a site in use: tests build their data inside a rolled-back transaction
-	if not frappe.db.exists("Item Group", {"is_group": 1, "parent_item_group": ("in", ("", None))}):
-		install("India")
+	install("India")  # preset masters; existing records are skipped
+	make_calendar_fiscal_years()
 	make_company()
 	frappe.db.commit()  # nosemgrep: setup data must survive the test transaction rollback
+
+
+def make_calendar_fiscal_years():
+	"""This year and next, committed: ERPNext caches fiscal years, so one created inside a
+	rolled-back test transaction would still be returned to the next test class."""
+	from erpnext.accounts.utils import FiscalYearError, get_fiscal_year
+
+	for year in (now_datetime().year, now_datetime().year + 1):
+		try:
+			get_fiscal_year(f"{year}-06-30")
+		except FiscalYearError:
+			frappe.get_doc(
+				{
+					"doctype": "Fiscal Year",
+					"year": str(year),
+					"year_start_date": f"{year}-01-01",
+					"year_end_date": f"{year}-12-31",
+				}
+			).insert()
 
 
 def base_date():
