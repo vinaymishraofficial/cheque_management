@@ -1,0 +1,62 @@
+{
+ "actions": [],
+ "creation": "2026-10-06 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "company",
+  "cheques_in_hand_account",
+  "cheques_issued_account",
+  "bank_charges_account"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "columns": 3,
+   "description": "Asset account (not Receivable) that holds received cheques until they clear.",
+   "fieldname": "cheques_in_hand_account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Cheques in Hand Account",
+   "options": "Account"
+  },
+  {
+   "columns": 3,
+   "description": "Liability account (not Payable) that holds issued cheques until they clear.",
+   "fieldname": "cheques_issued_account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Cheques Issued Account",
+   "options": "Account"
+  },
+  {
+   "columns": 2,
+   "description": "Expense account for charges the bank levies on a bounced cheque.",
+   "fieldname": "bank_charges_account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Bounce Charges Account",
+   "options": "Account"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-06 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "PDC Management",
+ "name": "Cheque Company Account",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

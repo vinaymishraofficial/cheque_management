@@ -1,14 +1,14 @@
 # Developer Guide
 
-For developers who want to run, extend or contribute to Cheque Management.
+For developers who want to run, extend or contribute to PDC Management.
 
 ## Local setup
 
 ```bash
 cd ~/frappe-bench
-bench get-app https://github.com/vinaymishraofficial/cheque_management   # or your fork
+bench get-app https://github.com/vinaymishraofficial/pdc_management   # or your fork
 bench new-site cheque.localhost --install-app erpnext --admin-password admin
-bench --site cheque.localhost install-app cheque_management
+bench --site cheque.localhost install-app pdc_management
 bench --site cheque.localhost set-config developer_mode 1
 bench --site cheque.localhost set-config allow_tests true
 bench start
@@ -17,14 +17,14 @@ bench start
 Install the git hooks once:
 
 ```bash
-cd apps/cheque_management
+cd apps/pdc_management
 pre-commit install
 ```
 
 ## Layout
 
 ```
-cheque_management/
+pdc_management/
 ├── hooks.py                 # doc events, scheduler, dashboards, accounting dimensions
 ├── accounting.py            # builds and posts / cancels the cheque's Journal Entries
 ├── install.py               # custom field on Journal Entry, dimensions, settings rows
@@ -34,7 +34,7 @@ cheque_management/
 │   ├── invoice.py           # block cancelling an invoice with an active cheque
 │   ├── journal_entry.py     # block cancelling a cheque's entry directly
 │   └── dashboards.py        # cheques in Customer / Supplier connections
-├── cheque_management/       # the module
+├── pdc_management/       # the module
 │   ├── doctype/cheque/      # controller, form, list, calendar, tests
 │   ├── doctype/cheque_settings/ ...
 │   ├── report/              # register, maturity, bounce analysis
@@ -91,8 +91,8 @@ curl -X POST https://site/api/method/run_doc_method \
 ## Tests
 
 ```bash
-bench --site cheque.localhost run-tests --app cheque_management
-bench --site cheque.localhost run-tests --module cheque_management.cheque_management.doctype.cheque.test_cheque
+bench --site cheque.localhost run-tests --app pdc_management
+bench --site cheque.localhost run-tests --module pdc_management.pdc_management.doctype.cheque.test_cheque
 ```
 
 - The tests create their own company, customer, supplier, item and bank accounts (`tests/utils.py`), and everything is rolled back after each class. They work on a fresh CI site and on a site with data.
@@ -110,7 +110,7 @@ CI (`.github/workflows/ci.yml`) runs the suite on Frappe / ERPNext `version-15` 
 
 ## Releasing
 
-1. Update `CHANGELOG.md` and bump `__version__` in `cheque_management/__init__.py`.
+1. Update `CHANGELOG.md` and bump `__version__` in `pdc_management/__init__.py`.
 2. Merge to `develop`, then fast-forward `version-15` and `version-16`.
 3. Tag `vX.Y.Z` and create a GitHub release.
 4. Frappe Cloud Marketplace picks up the release from the `version-15` / `version-16` branches.

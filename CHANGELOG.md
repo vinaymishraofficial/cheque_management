@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0
+
+- Renamed from `cheque_management` to `pdc_management` (module *PDC Management*), because the old name is taken on Frappe Cloud Marketplace. DocType names are unchanged. Sites that had the old app: uninstall it, then install this one; existing holding accounts are picked up again by name.
+
 ## 1.0.1
 
 - The daily digest no longer fails on sites without an outgoing Email Account; it is skipped.

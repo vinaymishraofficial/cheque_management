@@ -1,0 +1,137 @@
+{
+ "actions": [],
+ "creation": "2026-10-06 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "accounts_section",
+  "company_accounts",
+  "create_accounts",
+  "rules_section",
+  "allow_on_account",
+  "block_duplicate_cheque",
+  "column_break_rules",
+  "cheque_validity_months",
+  "reminders_section",
+  "send_daily_digest",
+  "digest_days_ahead",
+  "column_break_reminders",
+  "digest_role"
+ ],
+ "fields": [
+  {
+   "fieldname": "accounts_section",
+   "fieldtype": "Section Break",
+   "label": "Accounts"
+  },
+  {
+   "description": "One row per company. Use <b>Create Missing Accounts</b> to add the holding accounts to a company's chart of accounts.",
+   "fieldname": "company_accounts",
+   "fieldtype": "Table",
+   "label": "Company Accounts",
+   "options": "Cheque Company Account"
+  },
+  {
+   "fieldname": "create_accounts",
+   "fieldtype": "Button",
+   "label": "Create Missing Accounts"
+  },
+  {
+   "fieldname": "rules_section",
+   "fieldtype": "Section Break",
+   "label": "Rules"
+  },
+  {
+   "default": "1",
+   "description": "Let a cheque carry an amount that is not allocated to any invoice. It is posted as an advance.",
+   "fieldname": "allow_on_account",
+   "fieldtype": "Check",
+   "label": "Allow Unallocated Amount"
+  },
+  {
+   "default": "1",
+   "description": "Stop a second active cheque with the same number, party and drawee bank.",
+   "fieldname": "block_duplicate_cheque",
+   "fieldtype": "Check",
+   "label": "Block Duplicate Cheque Numbers"
+  },
+  {
+   "fieldname": "column_break_rules",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "3",
+   "description": "A cheque older than this cannot be deposited or cleared (stale cheque). 0 disables the check.",
+   "fieldname": "cheque_validity_months",
+   "fieldtype": "Int",
+   "label": "Cheque Validity (Months)",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "reminders_section",
+   "fieldtype": "Section Break",
+   "label": "Reminders"
+  },
+  {
+   "default": "1",
+   "description": "Email a daily list of cheques due for deposit, overdue, and issued cheques about to be presented.",
+   "fieldname": "send_daily_digest",
+   "fieldtype": "Check",
+   "label": "Send Daily Digest"
+  },
+  {
+   "default": "7",
+   "depends_on": "send_daily_digest",
+   "fieldname": "digest_days_ahead",
+   "fieldtype": "Int",
+   "label": "Look Ahead (Days)",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "column_break_reminders",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Accounts Manager",
+   "depends_on": "send_daily_digest",
+   "fieldname": "digest_role",
+   "fieldtype": "Link",
+   "label": "Send To Role",
+   "options": "Role"
+  }
+ ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-10-06 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "PDC Management",
+ "name": "Cheque Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Accounts User"
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

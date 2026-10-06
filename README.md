@@ -1,15 +1,15 @@
 <div align="center">
-  <img src="cheque_management/public/images/logo.svg" width="72" alt="" />
-  <h1>Cheque Management for ERPNext</h1>
+  <img src="pdc_management/public/images/logo.svg" width="72" alt="" />
+  <h1>PDC Management for ERPNext</h1>
   <p>Post-dated and current cheques, from receipt to clearance or bounce, with the accounting done right.</p>
 
-[![CI](https://github.com/vinaymishraofficial/cheque_management/actions/workflows/ci.yml/badge.svg)](https://github.com/vinaymishraofficial/cheque_management/actions/workflows/ci.yml)
+[![CI](https://github.com/vinaymishraofficial/pdc_management/actions/workflows/ci.yml/badge.svg)](https://github.com/vinaymishraofficial/pdc_management/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](license.txt)
 ![Frappe](https://img.shields.io/badge/Frappe%20%2F%20ERPNext-v15%20%7C%20v16-blue)
 
 </div>
 
-ERPNext records a cheque as a Payment Entry that is "paid" the day you type it in. That is wrong for a post-dated cheque: the money is not in the bank, the cheque can bounce, and nobody is reminded to deposit it on its date. Cheque Management tracks every cheque you **receive** from customers and **issue** to suppliers through its real life (in hand, deposited, cleared, bounced, returned, replaced) and posts the correct journal entry at each step.
+ERPNext records a cheque as a Payment Entry that is "paid" the day you type it in. That is wrong for a post-dated cheque: the money is not in the bank, the cheque can bounce, and nobody is reminded to deposit it on its date. PDC Management tracks every cheque you **receive** from customers and **issue** to suppliers through its real life (in hand, deposited, cleared, bounced, returned, replaced) and posts the correct journal entry at each step.
 
 ## Features
 
@@ -62,14 +62,14 @@ Every entry is a normal Journal Entry linked back to the cheque, so the General 
 
 ## Installation
 
-Frappe Cloud: add **Cheque Management** from the Marketplace to your site.
+Frappe Cloud: add **PDC Management** from the Marketplace to your site.
 
 Self-hosted (Frappe / ERPNext v15 or v16):
 
 ```bash
 cd ~/frappe-bench
-bench get-app https://github.com/vinaymishraofficial/cheque_management
-bench --site your-site install-app cheque_management
+bench get-app https://github.com/vinaymishraofficial/pdc_management
+bench --site your-site install-app pdc_management
 bench --site your-site migrate
 ```
 
@@ -113,7 +113,7 @@ The [User Guide](docs/user-guide.md) walks through each of these with the exact 
 Issues and pull requests are welcome. Start with the [Developer Guide](docs/developer-guide.md) and [CONTRIBUTING.md](CONTRIBUTING.md). Run the tests with:
 
 ```bash
-bench --site your-test-site run-tests --app cheque_management
+bench --site your-test-site run-tests --app pdc_management
 ```
 
 ## License

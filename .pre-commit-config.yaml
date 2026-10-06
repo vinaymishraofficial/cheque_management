@@ -8,7 +8,7 @@ repos:
     rev: v6.0.0
     hooks:
       - id: trailing-whitespace
-        files: "cheque_management.*"
+        files: "pdc_management.*"
         exclude: ".*json$|.*txt$|.*csv|.*md|.*svg"
       - id: check-merge-conflict
       - id: check-ast
@@ -38,11 +38,11 @@ repos:
         # Ignore any files that might contain jinja / bundles
         exclude: |
             (?x)^(
-                cheque_management/public/dist/.*|
+                pdc_management/public/dist/.*|
                 .*node_modules.*|
                 .*boilerplate.*|
-                cheque_management/templates/includes/.*|
-                cheque_management/public/js/lib/.*
+                pdc_management/templates/includes/.*|
+                pdc_management/public/js/lib/.*
             )$
 
 
@@ -55,12 +55,12 @@ repos:
         # Ignore any files that might contain jinja / bundles
         exclude: |
             (?x)^(
-                cheque_management/public/dist/.*|
+                pdc_management/public/dist/.*|
                 cypress/.*|
                 .*node_modules.*|
                 .*boilerplate.*|
-                cheque_management/templates/includes/.*|
-                cheque_management/public/js/lib/.*
+                pdc_management/templates/includes/.*|
+                pdc_management/public/js/lib/.*
             )$
 
 ci:

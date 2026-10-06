@@ -1,6 +1,6 @@
 # Accounting design
 
-This page explains, for accountants and implementers, what Cheque Management posts and why.
+This page explains, for accountants and implementers, what PDC Management posts and why.
 
 ## Accounts
 
