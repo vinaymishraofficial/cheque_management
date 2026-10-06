@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1
+
+- Desktop icon and sidebar now update on sites that had `cheque_management` installed.
+- Type hints on the whitelisted cheque actions, so v16 validates API input.
+- Install instructions moved from the README to `docs/installation.md`; privacy policy and terms pages added.
+
 ## 1.1.0
 
 - Renamed from `cheque_management` to `pdc_management` (module *PDC Management*), because the old name is taken on Frappe Cloud Marketplace. DocType names are unchanged. Sites that had the old app: uninstall it, then install this one; existing holding accounts are picked up again by name.
