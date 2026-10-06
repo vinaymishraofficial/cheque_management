@@ -85,7 +85,8 @@ def get_data(filters) -> list[dict]:
 			row.bounced += 1
 			row.bounced_amount += flt(cheque.base_amount)
 			row.bank_charges += flt(cheque.bank_charges)
-			row.last_bounce = max(filter(None, (row.last_bounce, cheque.bounce_date)))
+			if not row.last_bounce or cheque.bounce_date > row.last_bounce:
+				row.last_bounce = cheque.bounce_date
 			if cheque.bounce_reason:
 				row.reasons[cheque.bounce_reason] = row.reasons.get(cheque.bounce_reason, 0) + 1
 

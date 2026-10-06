@@ -136,9 +136,9 @@ def filter_for_user(sections, user: str):
 
 	def can_see(company):
 		if company not in allowed:
-			allowed[company] = frappe.has_permission("Cheque", "read", user=user) and frappe.has_permission(
-				"Company", "read", doc=company, user=user
-			)
+			allowed[company] = frappe.has_permission(
+				"Cheque", "read", user=user, throw=False
+			) and frappe.has_permission("Company", "read", doc=company, user=user, throw=False)
 		return allowed[company]
 
 	return [(label, [row for row in rows if can_see(row.company)]) for label, rows in sections]

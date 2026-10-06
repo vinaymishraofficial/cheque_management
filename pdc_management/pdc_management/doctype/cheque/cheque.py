@@ -10,6 +10,8 @@ Bounce and return post a reversing entry on their own date; nothing earlier is c
 
 from __future__ import annotations
 
+import datetime
+
 import frappe
 from frappe import _
 from frappe.model.document import Document
@@ -18,6 +20,10 @@ from frappe.utils import add_months, flt, get_link_to_form, getdate, nowdate
 from pdc_management import accounting
 from pdc_management.accounting import Line
 from pdc_management.utils import get_company_accounts, get_settings
+
+# Whitelisted arguments: dates arrive as strings over the API and as dates from Python.
+DateArg = str | datetime.date | None
+Number = float | int | None
 
 INVOICE_OF_PARTY = {"Customer": "Sales Invoice", "Supplier": "Purchase Invoice"}
 PARTY_FIELD = {"Sales Invoice": "customer", "Purchase Invoice": "supplier"}
@@ -361,7 +367,7 @@ class Cheque(Document):
 	# ---------------------------------------------------------------- actions
 
 	@frappe.whitelist()
-	def deposit(self, deposit_date=None, bank_account=None):
+	def deposit(self, deposit_date: DateArg = None, bank_account: str | None = None):
 		"""Record that a received cheque was handed to the bank. No ledger entry."""
 		self.begin("deposit")
 		deposit_date = getdate(deposit_date or nowdate())
@@ -383,7 +389,9 @@ class Cheque(Document):
 		self.finish("Deposited", deposit_date, bank_account=bank_account)
 
 	@frappe.whitelist()
-	def clear(self, clearance_date=None, bank_account=None, exchange_rate=None):
+	def clear(
+		self, clearance_date: DateArg = None, bank_account: str | None = None, exchange_rate: Number = None
+	):
 		"""The bank honoured the cheque: move it from the holding account to the bank."""
 		self.begin("clear")
 		clearance_date = getdate(clearance_date or nowdate())
@@ -416,7 +424,14 @@ class Cheque(Document):
 		self.finish("Cleared", clearance_date, entry, bank_account)
 
 	@frappe.whitelist()
-	def bounce(self, bounce_date=None, reason=None, charges=0, recover_charges=0, remarks=None):
+	def bounce(
+		self,
+		bounce_date: DateArg = None,
+		reason: str | None = None,
+		charges: Number = 0,
+		recover_charges: int | bool | None = 0,
+		remarks: str | None = None,
+	):
 		"""The bank returned the cheque unpaid: the party owes / is owed again, on the bounce date."""
 		self.begin("bounce")
 		bounce_date = getdate(bounce_date or nowdate())
@@ -460,7 +475,7 @@ class Cheque(Document):
 		self.finish("Bounced", bounce_date, entry, bank_account, remarks or reason)
 
 	@frappe.whitelist()
-	def return_cheque(self, return_date=None, remarks=None):
+	def return_cheque(self, return_date: DateArg = None, remarks: str | None = None):
 		"""Hand an undeposited cheque back to the party (or stop an issued one): reverse the receipt."""
 		self.begin("return")
 		return_date = getdate(return_date or nowdate())

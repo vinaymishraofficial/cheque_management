@@ -62,18 +62,7 @@ Every entry is a normal Journal Entry linked back to the cheque, so the General 
 
 ## Installation
 
-Frappe Cloud: add **PDC Management** from the Marketplace to your site.
-
-Self-hosted (Frappe / ERPNext v15 or v16):
-
-```bash
-cd ~/frappe-bench
-bench get-app https://github.com/vinaymishraofficial/pdc_management
-bench --site your-site install-app pdc_management
-bench --site your-site migrate
-```
-
-Use the `version-15` branch on v15 benches and `version-16` on v16.
+Install **PDC Management** from the Frappe Cloud Marketplace, or see [docs/installation.md](docs/installation.md) for self-hosted benches. Works on Frappe / ERPNext v15 and v16.
 
 ## Documentation
 
@@ -110,12 +99,8 @@ The [User Guide](docs/user-guide.md) walks through each of these with the exact 
 
 ## Contributing
 
-Issues and pull requests are welcome. Start with the [Developer Guide](docs/developer-guide.md) and [CONTRIBUTING.md](CONTRIBUTING.md). Run the tests with:
-
-```bash
-bench --site your-test-site run-tests --app pdc_management
-```
+Issues and pull requests are welcome. Start with the [Developer Guide](docs/developer-guide.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-MIT. See [license.txt](license.txt).
+MIT. See [license.txt](license.txt). [Privacy Policy](docs/privacy-policy.md) · [Terms of Use](docs/terms.md)
