@@ -20,18 +20,25 @@ ITEM = "_Test Cheque Service"
 
 
 def before_tests():
-	"""Make a fresh site usable: ERPNext's preset masters (root groups, UOMs, ...) and a company.
+	"""The v15 runner calls this; v16 runs these tests without it, so setup_test_data() also calls it."""
+	prepare_ci_site()
 
+
+def prepare_ci_site():
+	"""On a fresh CI site: ERPNext's preset masters, fiscal years and the test company, committed once.
+
+	Sites in use (no CI variable) are left alone; tests build their data in a rolled-back transaction.
 	Not the setup wizard: on v16 it returns early or swallows errors, leaving no masters behind."""
 	from erpnext.setup.setup_wizard.operations.install_fixtures import install
 
+	if not os.environ.get("CI") or frappe.flags.cheque_ci_site_ready:
+		return
 	frappe.clear_cache()
-	if not os.environ.get("CI") and frappe.get_all("Company", limit=1):
-		return  # a site in use: tests build their data inside a rolled-back transaction
-	install("India")  # preset masters; existing records are skipped
+	install("India")  # existing records are skipped
 	make_calendar_fiscal_years()
 	make_company()
 	frappe.db.commit()  # nosemgrep: setup data must survive the test transaction rollback
+	frappe.flags.cheque_ci_site_ready = True
 
 
 def make_calendar_fiscal_years():
@@ -62,6 +69,7 @@ def base_date():
 
 
 def setup_test_data():
+	prepare_ci_site()
 	make_company()
 	ensure_fiscal_year()
 	make_accounts()
